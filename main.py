@@ -2,34 +2,42 @@ from .FindFiles import FindFiles
 import pandas as pd
 
 class FileFinderUsage():
+    """
+    this is a class with Usage Examples for the FileFinder Module
+    Use it for reference
+    """
     def __init__(self):
         self.ff = FindFiles()
 
     def findHorizontalArtworks(self):
-        #print(PIL.PILLOW_VERSION)
-        #Einstellungsvariablen
+        """
+        finds artworks with size 3840x2160px in a searchpath, copies them to a destination folder and prints the name
+        and resolution of these files to the console
+        :return:
+        """
         searchpath = "G:\\Digitale Distribution\\10_PLATTFORMEN\\00_Grafik\\*\\*\\"
-        destination = 'G:/Digitale Distribution/10_PLATTFORMEN/00_Grafik/__iTunes_Querartworks/'
+        destination = 'G:\\Digitale Distribution\\10_PLATTFORMEN\\00_Grafik\\__iTunes_Querartworks\\'
 
-        #Files suchen
-        pfadliste = self.ff.findFiles(searchpath=searchpath, searchstring="*3840x2160*", filetype="png")
+        pathlist = self.ff.findFiles(searchpath=searchpath, searchstring="*3840x2160*", filetype="png")
 
-        #Files in einenOrdner kopieren
-        self.ff.copyfiles2folder(pfadliste, destination)
+        self.ff.copyfiles2folder(pathlist, destination)
 
-        #Auflösung von Bildern ausgeben
-        for file in pfadliste:
+        for file in pathlist:
             width, height = self.ff.get_image_size(file)
-            print(file + ": Auflösung: " + str(width) + "x" + str(height))
+            print(file + ": Resolution: " + str(width) + "x" + str(height))
 
 
     def findZipFiles(self):
+        """
+        finds zip-Files, saves the paths, filesizes and lastModifiedDates to a csv file
+        :return:
+        """
         fileList = self.ff.findFiles(searchpath="G:\\Digitale Distribution\\10_PLATTFORMEN\\00_Grafik\\*\\",
                                       filetype="zip")
         filesizes = []
-        sizeOfAllFiles = 0
         lastModifiedDate = []
-
+        sizeOfAllFiles = 0
+        
         for file in fileList:
             filesizes.append(self.ff.getFileSize(file))
             lastModifiedDate.append(self.ff.getLastModifiedDate(file))
@@ -37,7 +45,7 @@ class FileFinderUsage():
         df = pd.DataFrame(data={"path": fileList, "filesize": filesizes, "lastModifiedDate": lastModifiedDate})
         df.to_csv("./filesizes.csv", sep=',', index=True)
 
-        print("Anzahl zip-Dateien: " + len(filesizes))
+        print("Number of zip-files: " + len(filesizes))
         for filesize in filesizes:
             sizeOfAllFiles += filesize
             print(sizeOfAllFiles)
